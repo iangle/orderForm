@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import {useHistory} from 'react-router-dom';
-import "./Home.css";
+import "./Order.css";
 
-function Home(){
+function Order(){
 
   const [firstname, setfirstname] = useState("");
   const [lastname, setlastname] = useState("");
@@ -53,4 +53,4 @@ function Home(){
   );
 }
 
-export default Home;
+export default Order;
