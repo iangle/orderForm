@@ -1,17 +1,16 @@
 import React from 'react';
-import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
+import {BrowserRouter as Router, Switch, Route} from "react-router-dom";
 
 import Home from "./Home/Home";
-import Submit from "./Submit/Submit";
-import history from './history';
+import Success from "./Success/Success";
 
 const Routing = () => {
     return(
-        <Router history={history}>
-            <Routes>
-                <Route exact path='/' element={<Home/>} />
-                <Route path='/Submit' element={<Submit/>} />
-            </Routes>
+        <Router>
+            <Switch>
+                <Route exact path='/' component={Home} />
+                <Route exact path='/Success' component={Success} />
+            </Switch>
         </Router>
     )
 }
