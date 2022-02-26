@@ -4,6 +4,8 @@ import "./Order.css";
 
 function Order(){
 
+  var access_token = new URLSearchParams(window.location.hash).get('access_token');
+
   const [firstname, setfirstname] = useState("");
   const [lastname, setlastname] = useState("");
   const [id, setid] = useState("");
