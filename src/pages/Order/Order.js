@@ -11,7 +11,7 @@ function Order(){
    
   const submit = (e) => {
     e.preventDefault();
-    fetch('https://sxxkg99jqi.execute-api.us-west-2.amazonaws.com/items', {
+    fetch('https://sxxkg99jqi.execute-api.us-west-2.amazonaws.com/orders', {
         method: 'PUT',
         body: JSON.stringify({firstname, lastname, id, order})
       })
