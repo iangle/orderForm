@@ -6,17 +6,20 @@ function Order(){
 
   var access_token = new URLSearchParams(window.location.hash).get('access_token');
 
-  const [firstname, setfirstname] = useState("");
-  const [lastname, setlastname] = useState("");
-  const [id, setid] = useState("");
-  const [order, setorder] = useState("");
+  console.log(access_token);
+
+  const [customerID, setcustomerID] = useState("");
+  const [orderInfo, setorderInfo] = useState("");
    
   const submit = (e) => {
     e.preventDefault();
-    fetch('https://sxxkg99jqi.execute-api.us-west-2.amazonaws.com/orders', {
+    fetch('https://q4ooc4j5ib.execute-api.us-west-2.amazonaws.com/dev/orders', {
+        headers: {'Authorization': 'Bearer ' + access_token, 'Content-Type': 'application/json'},
         method: 'PUT',
-        body: JSON.stringify({firstname, lastname, id, order})
+        body: JSON.stringify({customerID, orderInfo}),
       })
+      .then(response => {console.log(response)})
+      .catch(error => {console.log(error)});
   }
 
   let history = useHistory();
@@ -30,26 +33,14 @@ function Order(){
       <form onSubmit={submit}>
         <h1> New Order</h1>
         <label>
-          First Name:
-          <input type="text" value={firstname} name="firstname" onChange={(e) => setfirstname(e.target.value)}/>
+          customerID:
+          <input type="text" value={customerID} name="customerID" onChange={(e) => setcustomerID(e.target.value)}/>
         </label>
         <label>
-          Last Name:
-          <input type="text" value={lastname} name="lastname" onChange={(e) => setlastname(e.target.value)}/>
+          What would you like to order?
+          <input type="text" value={orderInfo} name="orderInfo" onChange={(e) => setorderInfo(e.target.value)}/>
         </label>
-        <label>
-          ID:
-          <input type="text" value={id} name="id" onChange={(e) => setid(e.target.value)} />
-        </label>
-        <label>
-          What Would You Like to Order?
-          <select className='dropDown' name='order' value={order} onChange={(e) => setorder(e.target.value)}>
-            <option value='pepperoni pizza 15$'>Pepperonni Pizza 15$</option>
-            <option value='cheese pizza 15$'>Cheese Pizza 15$</option>
-            <option value='three cheese pizza 15$'>Three Cheese Pizza 15$</option>
-          </select>
-        </label>
-        <input onClick={buttonClicked} className='submitButton' type="submit" value="Submit" />
+        <input onClick={submit} className='submitButton' type="submit" value="Submit" />
       </form>
     </body>
   );
