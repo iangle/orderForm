@@ -7,28 +7,25 @@ function Home(){
 
   var access_token = new URLSearchParams(window.location.hash).get('access_token');
 
-  async function fetchEmail(){
-    const email = await fetch('https://cognito-idp.us-west-2.amazonaws.com', {
-      headers: {'Content-Type': 'application/x-amz-json-1.1', 'X-Amz-Target': 'AWSCognitoIdentityProviderService.GetUser'},
-      method: 'POST',
-      body: JSON.stringify({'AccessToken': access_token})
-    }).then(response => {
-      return response.json();
-    }).then(body => {
-      console.log(body["UserAttributes"][2]["Value"]);
-      return body["UserAttributes"][2]["Value"];
-    });
-
-    return email;
-  }
-
-  const email = fetchEmail();
-
-  console.log("Access Token: " + access_token);
-
   const [customerID, setcustomerID] = useState("");
   const [orderInfo, setorderInfo] = useState("");
   const [orderID, setOrderID] = useState("");
+  const [email, setEmail] = useState("");
+
+  //fetch the email from the Cognito API
+  fetch('https://cognito-idp.us-west-2.amazonaws.com', {
+    headers: {'Content-Type': 'application/x-amz-json-1.1', 'X-Amz-Target': 'AWSCognitoIdentityProviderService.GetUser'},
+    method: 'POST',
+    body: JSON.stringify({'AccessToken': access_token})
+  }).then(response => {
+    return response.json();
+  }).then(body => {
+    var theEmail = body["UserAttributes"][2]["Value"];
+    setEmail("Welcome " + theEmail.substring(0, theEmail.lastIndexOf("@")));
+  }).catch(error => {
+    console.log(error);
+    setEmail("Login/Sign Up!");
+  });
    
   //send payload and headers to aws api gateway to send data to the database
   const submit = (e) => {
@@ -51,7 +48,7 @@ function Home(){
 
   return(
     <div className='mainDiv'>  
-       <a className='loginLink' href={sign_in_link}> Login/Sign Up </a>
+       <a className='loginLink' href={sign_in_link}> {email} </a>
       <img className='mainImage' src={homeImage} alt='Background'></img>
 
       <h2> Order Here</h2>
