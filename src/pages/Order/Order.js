@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {useHistory} from 'react-router-dom';
-import "./Order.css";
+
 
 function Order(){
 
@@ -10,19 +10,22 @@ function Order(){
 
   const [customerID, setcustomerID] = useState("");
   const [orderInfo, setorderInfo] = useState("");
+  const [orderID, setOrderID] = useState("");
+
+  let history = useHistory();
    
   const submit = (e) => {
     e.preventDefault();
     fetch('https://q4ooc4j5ib.execute-api.us-west-2.amazonaws.com/dev/orders', {
         headers: {'Authorization': 'Bearer ' + access_token, 'Content-Type': 'application/json'},
         method: 'PUT',
-        body: JSON.stringify({customerID, orderInfo}),
+        body: JSON.stringify({customerID, orderID, orderInfo}),
       })
       .then(response => {console.log(response)})
       .catch(error => {console.log(error)});
-  }
 
-  let history = useHistory();
+      history.push('/Success');
+    }
 
   function buttonClicked(){
     history.push('/Success');
@@ -35,6 +38,10 @@ function Order(){
         <label>
           customerID:
           <input type="text" value={customerID} name="customerID" onChange={(e) => setcustomerID(e.target.value)}/>
+        </label>
+        <label>
+          OrderID:
+          <input type="text" value={orderID} name="customerID" onChange = {(e) => setOrderID(e.target.value)}/>
         </label>
         <label>
           What would you like to order?

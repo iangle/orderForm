@@ -1,28 +1,77 @@
-import React from 'react';
+import React, {useState} from 'react';
 import homeImage from '../../Images/homePageFoodImage.jpg';
-import {Button, Card} from "react-bootstrap";
 import './Home.css'
+import './Order.css'
 
 function Home(){
 
-  const sign_in_link = 'https://restuarantordering.auth.us-west-2.amazoncognito.com/login?client_id=3707r9tfbti3hkqu17tvo0p34n&response_type=token&scope=apiAccess.com/database.read+aws.cognito.signin.user.admin+email+openid+phone+profile&redirect_uri=http://localhost:3000/Order';
+  var access_token = new URLSearchParams(window.location.hash).get('access_token');
+
+  async function fetchEmail(){
+    const email = await fetch('https://cognito-idp.us-west-2.amazonaws.com', {
+      headers: {'Content-Type': 'application/x-amz-json-1.1', 'X-Amz-Target': 'AWSCognitoIdentityProviderService.GetUser'},
+      method: 'POST',
+      body: JSON.stringify({'AccessToken': access_token})
+    }).then(response => {
+      return response.json();
+    }).then(body => {
+      console.log(body["UserAttributes"][2]["Value"]);
+      return body["UserAttributes"][2]["Value"];
+    });
+
+    return email;
+  }
+
+  const email = fetchEmail();
+
+  console.log("Access Token: " + access_token);
+
+  const [customerID, setcustomerID] = useState("");
+  const [orderInfo, setorderInfo] = useState("");
+  const [orderID, setOrderID] = useState("");
+   
+  //send payload and headers to aws api gateway to send data to the database
+  const submit = (e) => {
+    e.preventDefault();
+    fetch('https://q4ooc4j5ib.execute-api.us-west-2.amazonaws.com/dev/orders', {
+        headers: {'Authorization': 'Bearer ' + access_token, 'Content-Type': 'application/json'},
+        method: 'PUT',
+        body: JSON.stringify({customerID, orderID, orderInfo}),
+      })
+      .then(response => {console.log(response);
+        if(response.status !== 200){
+          alert("Looks like you need to sign in before ordering")
+        } else{
+          alert("Thank you for ordering!")
+        }})
+      .catch(error => {console.log(error); alert("An error occured, please try again after signing in")});
+    }
+
+  const sign_in_link = 'https://restuarantordering.auth.us-west-2.amazoncognito.com/login?client_id=3707r9tfbti3hkqu17tvo0p34n&response_type=token&scope=apiAccess.com/database.read+aws.cognito.signin.user.admin+email+openid+phone+profile&redirect_uri=https://d3p7plggu38z55.cloudfront.net/';
 
   return(
     <div className='mainDiv'>  
-       <a className='loginLink' href={sign_in_link}> Login/Sign Up</a>
+       <a className='loginLink' href={sign_in_link}> Login/Sign Up </a>
       <img className='mainImage' src={homeImage} alt='Background'></img>
 
-      <Card className="cards">
-        <Card.Img variant="top" />
-        <Card.Body>
-          <Card.Title>Card Title</Card.Title>
-            <Card.Text>
-              Some quick example text to build on the card title and make up the bulk of
-              the card's content.
-            </Card.Text>
-            <Button variant="primary">Go somewhere</Button>
-        </Card.Body>
-      </Card>
+      <h2> Order Here</h2>
+      <form onSubmit={submit}>
+        <h1> New Order</h1>
+        <label>
+          customerID:
+          <input type="text" value={customerID} name="customerID" onChange={(e) => setcustomerID(e.target.value)}/>
+        </label>
+        <label>
+          OrderID:
+          <input type="text" value={orderID} name="customerID" onChange = {(e) => setOrderID(e.target.value)}/>
+        </label>
+        <label>
+          What would you like to order?
+          <input type="text" value={orderInfo} name="orderInfo" onChange={(e) => setorderInfo(e.target.value)}/>
+        </label>
+        <input onClick={submit} className='submitButton' type="submit" value="Submit" />
+      </form>
+
     </div>
 
   );
