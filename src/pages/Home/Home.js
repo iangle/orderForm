@@ -24,7 +24,7 @@ function Home(){
     setEmail("Welcome " + theEmail.substring(0, theEmail.lastIndexOf("@")));
   }).catch(error => {
     console.log(error);
-    setEmail("Login/Sign Up!");
+    setEmail("Login/Sign Up");
   });
    
   //send payload and headers to aws api gateway to send data to the database
@@ -68,6 +68,91 @@ function Home(){
         </label>
         <input onClick={submit} className='submitButton' type="submit" value="Submit" />
       </form>
+
+      <div className='row'>
+
+        <div className='column'>
+          <div className='card'>
+            <h3> Something</h3>
+            <p>Hello1</p>
+            <p>hello2</p>
+            <p>hello3</p>
+          </div>
+        </div>
+
+        <div className='column'>
+          <div className='card'>
+          <h3> Something</h3>
+            <p>Hello1</p>
+            <p>hello2</p>
+            <p>hello3</p>
+          </div>
+        </div>
+
+        <div className='column'>
+          <div className='card'>
+          <h3> Something</h3>
+            <p>Hello1</p>
+            <p>hello2</p>
+            <p>hello3</p>
+          </div>
+        </div>
+
+        <div className='column'>
+          <div className='card'>
+          <h3> Something</h3>
+            <p>Hello1</p>
+            <p>hello2</p>
+            <p>hello3</p>
+          </div>
+        </div>
+
+        <div className='column'>
+          <div className='card'>
+          <h3> Something</h3>
+            <p>Hello1</p>
+            <p>hello2</p>
+            <p>hello3</p>
+          </div>
+        </div>
+
+        <div className='column'>
+          <div className='card'>
+          <h3> Something</h3>
+            <p>Hello1</p>
+            <p>hello2</p>
+            <p>hello3</p>
+          </div>
+        </div>
+
+        <div className='column'>
+          <div className='card'>
+          <h3> Something</h3>
+            <p>Hello1</p>
+            <p>hello2</p>
+            <p>hello3</p>
+          </div>
+        </div>
+
+        <div className='column'>
+          <div className='card'>
+          <h3> Something</h3>
+            <p>Hello1</p>
+            <p>hello2</p>
+            <p>hello3</p>
+          </div>
+        </div>
+
+        <div className='column'>
+          <div className='card'>
+          <h3> Something</h3>
+            <p>Hello1</p>
+            <p>hello2</p>
+            <p>hello3</p>
+          </div>
+        </div>
+
+      </div>
 
     </div>
 
