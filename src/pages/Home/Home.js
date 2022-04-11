@@ -5,18 +5,21 @@ import './Order.css'
 
 function Home(){
 
-  var access_token = new URLSearchParams(window.location.hash).get('access_token');
+  var id_token = new URLSearchParams(window.location.hash).get('id_token');
+  //var access_token = new URLSearchParams(window.location.hash).get('id_token');
 
   const [customerID, setcustomerID] = useState("");
   const [orderInfo, setorderInfo] = useState("");
   const [orderID, setOrderID] = useState("");
   const [email, setEmail] = useState("");
+  const [productId] = useState("a6dd7187-40b6-4cb5-b73c-aecd655c6d9a");
+  const [quantity] = useState("1");
 
   //fetch the email from the Cognito API
   fetch('https://cognito-idp.us-west-2.amazonaws.com', {
     headers: {'Content-Type': 'application/x-amz-json-1.1', 'X-Amz-Target': 'AWSCognitoIdentityProviderService.GetUser'},
     method: 'POST',
-    body: JSON.stringify({'AccessToken': access_token})
+    body: JSON.stringify({'AccessToken': id_token})
   }).then(response => {
     return response.json();
   }).then(body => {
@@ -30,10 +33,10 @@ function Home(){
   //send payload and headers to aws api gateway to send data to the database
   const submit = (e) => {
     e.preventDefault();
-    fetch('https://q4ooc4j5ib.execute-api.us-west-2.amazonaws.com/dev/orders', {
-        headers: {'Authorization': 'Bearer ' + access_token, 'Content-Type': 'application/json'},
-        method: 'PUT',
-        body: JSON.stringify({customerID, orderID, orderInfo}),
+    fetch('https://yvkt6ela28.execute-api.us-west-2.amazonaws.com/Prod/cart', {
+        headers: {'Authorization': id_token, 'Content-Type': 'application/json'},
+        method: 'POST',
+        body: JSON.stringify({customerID, orderID, orderInfo, productId, quantity}),
       })
       .then(response => {console.log(response);
         if(response.status !== 200){
@@ -60,7 +63,7 @@ function Home(){
         </label>
         <label>
           OrderID:
-          <input type="text" value={orderID} name="customerID" onChange = {(e) => setOrderID(e.target.value)}/>
+          <input type="text" value={orderID} name="orderID" onChange = {(e) => setOrderID(e.target.value)}/>
         </label>
         <label>
           What would you like to order?
