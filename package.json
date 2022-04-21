@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^4.12.4",
+    "@material-ui/icons": "^4.11.3",
     "@progress/kendo-data-query": "^1.5.5",
     "@progress/kendo-drawing": "^1.16.2",
     "@progress/kendo-licensing": "^1.2.1",
@@ -20,9 +22,11 @@
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
     "react": "^17.0.2",
+    "react-cookie": "^4.1.1",
     "react-dom": "^17.0.2",
-    "react-hook-form": "^7.25.1",
-    "react-scripts": "5.0.0",
+    "react-hook-form": "^7.29.0",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "^5.0.0",
     "reactstrap": "^9.0.1",
     "styled-components": "^5.3.3",
     "web-vitals": "^2.1.4"
@@ -31,7 +35,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy": "aws s3 sync build/ s3://reactappbucket123"
   },
   "eslintConfig": {
     "extends": [

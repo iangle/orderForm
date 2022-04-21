@@ -1,115 +1,123 @@
-import React, { Component } from 'react';
+import React, {useState, useEffect} from 'react'
 
-class App extends Component {
-  
-    constructor(props) {
-      super(props);
-      this.state = 
-      { 
-        firstname: '',
-        lastname: '',
-        id: '',
-        order: '',
-        errors: {
-          firstname: '',
-          lastname: '',
-          id: '',
-          order: '',
-        }
-      };
-    }
+import {Products, Navbar, Cart} from './components';
 
+import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
+
+
+const App = () => {
+
+  const [products, setProducts] = useState([]);
+  const [cart, setCart] = useState({});
+
+  //updates the quantity of a specified product in the cart
+  const handleUpdateCartQty = async (productId, quantity) => {
+    await fetch('https://aub9m96i3e.execute-api.us-west-2.amazonaws.com/Prod/cart/' + productId, {
+      headers: {'Content-Type': 'application/json'},
+      method: 'PUT',
+      body: JSON.stringify({quantity}),
+      credentials: 'include',
+    })
+    .then(response => {
+      console.log(response);
+      if(response.status !== 200){
+        console.log("an error occured")
+      }else{
+        console.log("successfully retrieved payload");
+      }
+
+      return response
+    }).catch(error => {console.log(error);});
+
+    fetchCart();
+  }
+
+  //retreives the cart from the backend and stores the JSON into the cart variable
+  const fetchCart = async () => {
+    const response = await fetch('https://aub9m96i3e.execute-api.us-west-2.amazonaws.com/Prod/cart', { credentials: 'include', })
+    .then(response => {
+      console.log(response);
+      if(response.status !== 200){
+        console.log("an error occured")
+      }else{
+        console.log("successfully retrieved payload");
+      }
+
+      return response
+    }).catch(error => {console.log(error);});
+
+    const data = await response.json();
+
+    setCart(data.products);
+  }
+
+  //adds a product to the cart
+  const handleAddToCart = async (productId, quantity) => {
     
-
-    /*handleValidation(){
-      let value = this.state.value;
-      let formIsValid = true;
-
-      if (!value["firstname"]) {
-        formIsValid = false;
-       // errors["name"] = "Cannot be empty";
+    await fetch('https://aub9m96i3e.execute-api.us-west-2.amazonaws.com/Prod/cart', {
+      headers: {'Content-Type': 'application/json'},
+      method: 'POST',
+      body: JSON.stringify({productId, quantity}),
+      credentials: 'include',
+    })
+    .then(response => {
+      console.log(response);
+      if(response.status !== 200){
+        console.log("an error occured")
+      }else{
+        console.log("successfully retrieved payload");
       }
 
-      return formIsValid;
-    }*/
-   
-    handleChange = (event) => {
+      return response
+    }).catch(error => {console.log(error);});
 
-      const { name, value } = event.target;
-      let errors = this.state.errors;
+    fetchCart();
 
-      switch (name) {
-        case 'firstname': 
-          errors.fullName = 
-            value.length < 1
-              ? 'First name is a required field'
-              : '';
-          break;
-        case 'lastname': 
-          errors.password = 
-            value.length < 1
-              ? 'Last name is a required field'
-              : '';
-          break;
-          case 'id': 
-          errors.password = 
-            value.length < 1
-              ? 'ID is a required field'
-              : '';
-          break;
-        default:
-          break;
-      }
-
-      this.setState({[event.target.name]: event.target.value});
-    }
-   
-    handleSubmit = (event) => {
-      
-      alert('Thank you for submitting your order! ' + this.state);
-   
-      fetch('https://sxxkg99jqi.execute-api.us-west-2.amazonaws.com/items', {
-          method: 'PUT',
-          // We convert the React state to JSON and send it as the POST body
-          body: JSON.stringify(this.state)
-        }).then(function(response) {
-          console.log(response)
-          return response.json();
-        });
-   
-      event.preventDefault();
   }
-   
-    render() {
-      return (
-        <body>
-          <form onSubmit={this.handleSubmit}>
-            <h1> New Order</h1>
-            <label>
-              First Name:
-              <input type="text" value={this.state.value} name="firstname" onChange={this.handleChange} />
-            </label>
-            <label>
-              Last Name:
-              <input type="text" value={this.state.value} name="lastname" onChange={this.handleChange} />
-            </label>
-            <label>
-              ID:
-              <input type="text" value={this.state.value} name="id" onChange={this.handleChange} />
-            </label>
-            <label>
-              What Would You Like to Order?
-              <select className='dropDown' name='order' value={this.state.value} onChange={this.handleChange}>
-                <option value='pepperoni pizza 15$'>Pepperonni Pizza 15$</option>
-                <option value='cheese pizza 15$'>Cheese Pizza 15$</option>
-                <option value='three cheese pizza 15$'>Three Cheese Pizza 15$</option>
-              </select>
-            </label>
-            <input className='submitButton' type="submit" value="Submit" />
-          </form>
-        </body>
-      );
+  
+  //gets all the products from the backend so we can display them in the website
+  const getProducts = async () => {
+  const response = await fetch('https://1ugi1yyrii.execute-api.us-west-2.amazonaws.com/Prod/product')
+  .then(response => {
+    console.log(response);
+    if(response.status !== 200){
+      console.log("an error occured when retrieving the payload")
+    } else{
+      console.log("successfully retrieved payload")
     }
-  }
+
+    return response;
+  }).catch(error => {console.log(error);});
+
+  const data = await response.json();
+
+  setProducts(data.products);
+}
+
+  //this function runs everytime the page reloads
+  useEffect(() => {
+
+    getProducts();
+    fetchCart();
+  }, []);
+
+
+  //return all of our components and pass in the values we need to use
+  return (
+    <Router>
+      <div> 
+        <Navbar cart={cart}/>
+        <Switch>
+          <Route exact path='/'>
+            <Products products={products} onAddToCart={handleAddToCart}/> 
+          </Route>
+          <Route exact path='/cart'>
+            <Cart cart={cart} handleUpdateCartQty={handleUpdateCartQty}/>
+          </Route>
+        </Switch>
+      </div>
+    </Router>
+  );
+}
 
 export default App;
