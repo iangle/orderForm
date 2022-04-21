@@ -7,6 +7,7 @@ import logo from '../../assets/fries.png';
 import useStyles from './styles';
 
 const Navbar = ( cart ) => {
+    
     const classes = useStyles();
     const location = useLocation();
 
