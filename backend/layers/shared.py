@@ -54,6 +54,7 @@ def get_user_sub(jwt_token):
     Validate JWT claims & retrieve user
     """
     try:
+        logger.info("This ran!")
         verified_claims = cognitojwt.decode(
             jwt_token, os.environ["AWS_REGION"], os.environ["USERPOOL_ID"]
         )

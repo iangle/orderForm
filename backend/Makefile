@@ -1,5 +1,5 @@
 all: build deploy
-ORIGIN ?= http://localhost:3000
+ORIGIN ?= https://d3p7plggu38z55.cloudfront.net
 STACKNAME ?= aws-serverless-shopping-cart
 
 build:
