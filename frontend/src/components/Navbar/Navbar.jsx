@@ -6,16 +6,28 @@ import { Link, useLocation} from 'react-router-dom';
 import logo from '../../assets/fries.png';
 import useStyles from './styles';
 
-const Navbar = ( cart ) => {
+const Navbar = ( cart) => {
     
     const classes = useStyles();
     const location = useLocation();
 
+    const username = {};
+    
     let theCart = cart.cart;
     let totalItems = 0;
     for(let i = 0; i < theCart.length; i++){
         totalItems += theCart[i].quantity;
     }
+
+    const isUsername = !username;
+
+    const SetUsername = () => (
+        <Typography variant="h6" color='inherit'>{username}</Typography>
+    );
+
+    const SetLogin = () => (
+        <Typography component={Link} to='/login' variant="h6" color='inherit'>Login</Typography>
+    );
 
   return (
     <>
@@ -26,7 +38,8 @@ const Navbar = ( cart ) => {
                     Burger Joint
                 </Typography>
                 <div className={classes.grow} />
-                {location.pathname === '/' && (
+                { isUsername ? <SetUsername /> : <SetLogin /> }
+                {(location.pathname === '/' || location.pathname === '/login' || location.pathname === '/register') && (
                     <div className={classes.button}>
                         <IconButton component={Link} to='/cart' aria-label="Show Cart Items" color='inherit'>
                             <Badge badgeContent={totalItems} color='secondary'>

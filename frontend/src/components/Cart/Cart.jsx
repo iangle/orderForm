@@ -4,7 +4,7 @@ import {Container, Typography, Button, Grid} from '@material-ui/core';
 import useStyles from './styles';
 import CartItem from './CartItem/CartItem';
 
-const Cart = ( { cart, handleUpdateCartQty} ) => {
+const Cart = ( { cart, handleUpdateCartQty, checkout} ) => {
 
     //computes the total number of items in the cart and their combined price
     let totalItems = 0;
@@ -44,7 +44,7 @@ const Cart = ( { cart, handleUpdateCartQty} ) => {
                 <Typography variant="h4">SubTotal: ${totalPrice} </Typography>
                 <div>
                     <Button className={classes.emptyButton} size='large' type='button' variant='contained' color='secondary' onClick={() => clearCart()}>Empty Cart </Button>
-                    <Button className={classes.checkoutButton} size='large' type='button' variant='contained' color='primary'>Checkout </Button>
+                    <Button className={classes.checkoutButton} size='large' type='button' variant='contained' color='primary' onClick={() => checkout()}>Checkout </Button>
                 </div>
         </div>
         </>
