@@ -150,7 +150,7 @@ function registerUser(username, password){
   
   //gets all the products from the backend so we can display them in the website
   const getProducts = async () => {
-  const response = await fetch('https://4x4zc8a1a2.execute-api.us-west-2.amazonaws.com/Prod/product')
+  const response = await fetch('https://wetrk15va0.execute-api.us-west-2.amazonaws.com/prod/')
   .then(response => {
     console.log(response);
     if(response.status !== 200){
@@ -164,7 +164,7 @@ function registerUser(username, password){
 
     const data = await response.json();
 
-    setProducts(data.products);
+    setProducts(data.Items);
   }
 
   const checkout = async () => {

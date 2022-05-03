@@ -35,7 +35,7 @@ const Navbar = ( cart) => {
             <Toolbar>
                 <Typography component={Link} to='/' variant="h6" className={classes.title} color='inherit'>
                     <img src={logo} alt="commerce.js" height="25px" className={classes.image} />
-                    Burger Joint
+                    Burger Shop
                 </Typography>
                 <div className={classes.grow} />
                 { isUsername ? <SetUsername /> : <SetLogin /> }
