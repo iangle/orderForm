@@ -30,8 +30,8 @@ const App = () => {
     var authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
 
     var poolData = {
-      UserPoolId: 'us-west-2_iSUbbjgXc', // Your user pool id here
-      ClientId: '2qcg48u7lrjd25cbsbd0ju3lse', // Your client id here
+      UserPoolId: 'us-west-2_vzC9QSbAL', // Your user pool id here
+      ClientId: '59dtuohbrcbh364tvrsr6oc8he', // Your client id here
     };
 
     var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
@@ -43,8 +43,7 @@ const App = () => {
   var cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
   cognitoUser.authenticateUser(authenticationDetails, {
       onSuccess: function (result) {
-          const idToken = result.getIdToken().getJwtToken();
-          setToken(idToken);
+          setToken(result.getIdToken().getJwtToken());
           fetchCart();
           history.push('/');
 
@@ -60,8 +59,8 @@ const App = () => {
 function registerUser(username, password){
 
   var poolData = {
-    UserPoolId: 'us-west-2_iSUbbjgXc', // Your user pool id here
-    ClientId: '2qcg48u7lrjd25cbsbd0ju3lse', // Your client id here
+    UserPoolId: 'us-west-2_vzC9QSbAL', // Your user pool id here
+    ClientId: '59dtuohbrcbh364tvrsr6oc8he', // Your client id here
   };
 
   var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
@@ -82,7 +81,7 @@ function registerUser(username, password){
 
   //updates the quantity of a specified product in the cart
   const handleUpdateCartQty = async (productId, quantity) => {
-    await fetch('https://69xv1m9khl.execute-api.us-west-2.amazonaws.com/Prod/cart/' + productId, {
+    await fetch('https://3fyby70779.execute-api.us-west-2.amazonaws.com/Prod/cart' + productId, {
       headers: {'Content-Type': 'application/json', 'Authorization': token},
       method: 'PUT',
       body: JSON.stringify({quantity}),
@@ -104,7 +103,7 @@ function registerUser(username, password){
 
   //retreives the cart from the backend and stores the JSON into the cart variable
   const fetchCart = async () => {
-    const response = await fetch('https://69xv1m9khl.execute-api.us-west-2.amazonaws.com/Prod/cart/', { 
+    const response = await fetch('https://3fyby70779.execute-api.us-west-2.amazonaws.com/Prod/cart', { 
       headers: { 'Authorization': token },
       credentials: 'include', 
     })
@@ -127,7 +126,7 @@ function registerUser(username, password){
   //adds a product to the cart
   const handleAddToCart = async (productId, quantity) => {
     
-    await fetch('https://69xv1m9khl.execute-api.us-west-2.amazonaws.com/Prod/cart', {
+    await fetch('https://3fyby70779.execute-api.us-west-2.amazonaws.com/Prod/cart', {
       headers: {'Content-Type': 'application/json', 'Authorization': token},
       method: 'POST',
       body: JSON.stringify({productId, quantity}),
@@ -168,7 +167,7 @@ function registerUser(username, password){
   }
 
   const checkout = async () => {
-    await fetch('https://69xv1m9khl.execute-api.us-west-2.amazonaws.com/Prod/cart/checkout', {
+    await fetch('https://3fyby70779.execute-api.us-west-2.amazonaws.com/Prod/cart/checkout', {
       headers: {'Content-Type': 'application/json', 'Authorization': token},
       method: 'POST',
       credentials: 'include',

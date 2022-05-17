@@ -11,7 +11,7 @@ const Cart = ( { cart, handleUpdateCartQty, checkout} ) => {
     let totalPrice = 0;
     for(let i = 0; i < cart.length; i++){
         totalItems += cart[i].quantity;
-        totalPrice += cart[i].productDetail.price * cart[i].quantity;
+        totalPrice += cart[i].productDetail[0].price * cart[i].quantity;
     }
 
     const isEmpty = !totalItems;
@@ -20,7 +20,7 @@ const Cart = ( { cart, handleUpdateCartQty, checkout} ) => {
     //empties the cart
     const clearCart = () =>{
         for(let i = 0; i < cart.length; i++){
-            handleUpdateCartQty(cart[i].productDetail.productId, 0);
+            handleUpdateCartQty(cart[i].productDetail[0].productId, 0);
         }
     }
 
@@ -34,7 +34,7 @@ const Cart = ( { cart, handleUpdateCartQty, checkout} ) => {
         <>
         <Grid container spacing={3}>
             {cart.map((item) => (
-                <Grid item xs={12} sm={4} key={item.productDetail.productId}>
+                <Grid item xs={12} sm={4} key={item.productDetail[0].productId}>
                     <CartItem item={item} handleUpdateCartQty={handleUpdateCartQty}/>
                 </Grid>
             ))}

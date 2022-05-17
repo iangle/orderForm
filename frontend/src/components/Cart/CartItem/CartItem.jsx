@@ -7,24 +7,25 @@ import useStyles from './styles';
 const CartItem = ( { item, handleUpdateCartQty} ) => {
   
   const classes = useStyles();
+
   
   return (
       <Card>
-          <CardMedia image={item.productDetail.picture} alt={item.productDetail.name} className={classes.media}/>
+          <CardMedia image={item.productDetail[0].picture} alt={item.productDetail[0].name} className={classes.media}/>
           <CardContent className={classes.cardContent}>
-              <Typography variant='h4'> {item.productDetail.name} </Typography>
-              <Typography variant='h5'> ${item.productDetail.price} </Typography>
+              <Typography variant='h4'> {item.productDetail[0].name} </Typography>
+              <Typography variant='h5'> ${item.productDetail[0].price} </Typography>
           </CardContent>
 
           <CardActions className={classes.cardActions}>
               <div className={classes.buttons}>
-                <Button type='button' size='small' onClick={() => handleUpdateCartQty(item.productDetail.productId, item.quantity -1)}>- </Button>
+                <Button type='button' size='small' onClick={() => handleUpdateCartQty(item.productDetail[0].productId, item.quantity - 1)}>- </Button>
                 <Typography>{item.quantity}</Typography>
-                <Button type='button' size='small' onClick={() => handleUpdateCartQty(item.productDetail.productId, item.quantity + 1)}>+ </Button>
+                <Button type='button' size='small' onClick={() => handleUpdateCartQty(item.productDetail[0].productId, item.quantity + 1)}>+ </Button>
 
               </div>
 
-              <Button variant='contained' type='button' color='secondary' onClick={() => handleUpdateCartQty(item.productDetail.productId, 0)}>Remove</Button>
+              <Button variant='contained' type='button' color='secondary' onClick={() => handleUpdateCartQty(item.productDetail[0].productId, 0)}>Remove</Button>
 
           </CardActions>
       </Card>

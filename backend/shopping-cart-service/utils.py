@@ -16,9 +16,12 @@ def get_product_from_external_service(product_id):
     """
     Call product API to retrieve product details
     """
-    response = requests.get(product_service_url + f"/product/{product_id}")
+    response = requests.get(product_service_url + f"{product_id}")
+
+    logger.info(response.text)
+
     try:
-        response_dict = response.json()["product"]
+        response_dict = response.json()["Items"]
 
         logger.info(response.text)
 

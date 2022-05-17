@@ -30,6 +30,7 @@ Globals:
     Environment:
       Variables:
         TABLE_NAME: !Ref DynamoDBShoppingCartTable
+        ORDER_TABLE_NAME: 'restaurantOrders'
         LOG_LEVEL: "INFO"
         ALLOWED_ORIGIN: !Ref AllowedOrigin
         POWERTOOLS_SERVICE_NAME: shopping-cart
@@ -113,7 +114,8 @@ Resources:
               "xray:PutTelemetryRecords",
               "logs:CreateLogGroup",
               "logs:CreateLogStream",
-              "logs:PutLogEvents"
+              "logs:PutLogEvents",
+              "dynamodb:UpdateItem"
               ]
             Resource: "*"
       Roles:
@@ -211,7 +213,7 @@ Resources:
         - !Ref UtilsLayer
       Environment:
         Variables:
-          PRODUCT_SERVICE_URL: !Ref ProductServiceUrl
+          PRODUCT_SERVICE_URL: "https://wetrk15va0.execute-api.us-west-2.amazonaws.com/prod/"
           USERPOOL_ID: !Ref UserPoolId
       Events:
         AddToCart:
@@ -233,7 +235,7 @@ Resources:
         - !Ref UtilsLayer
       Environment:
         Variables:
-          PRODUCT_SERVICE_URL: !Ref ProductServiceUrl
+          PRODUCT_SERVICE_URL: "https://wetrk15va0.execute-api.us-west-2.amazonaws.com/prod/"
           USERPOOL_ID: !Ref UserPoolId
       Events:
         AddToCart:
@@ -255,7 +257,7 @@ Resources:
         - !Ref UtilsLayer
       Environment:
         Variables:
-          PRODUCT_SERVICE_URL: !Ref ProductServiceUrl
+          PRODUCT_SERVICE_URL: "https://wetrk15va0.execute-api.us-west-2.amazonaws.com/prod/"
           USERPOOL_ID: !Ref UserPoolId
           DELETE_FROM_CART_SQS_QUEUE: !Ref CartDeleteSQSQueue
       Role: !GetAtt AddToCartRole.Arn
@@ -281,7 +283,7 @@ Resources:
         - !Ref UtilsLayer
       Environment:
         Variables:
-          PRODUCT_SERVICE_URL: !Ref ProductServiceUrl
+          PRODUCT_SERVICE_URL: "https://wetrk15va0.execute-api.us-west-2.amazonaws.com/prod/"
           USERPOOL_ID: !Ref UserPoolId
       Role: !GetAtt AddToCartRole.Arn
       Events:

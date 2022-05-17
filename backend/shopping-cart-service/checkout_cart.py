@@ -15,6 +15,7 @@ dynamodb = boto3.resource("dynamodb")
 
 logger.debug("Initializing DDB Table %s", os.environ["TABLE_NAME"])
 table = dynamodb.Table(os.environ["TABLE_NAME"])
+orderTable = dynamodb.Table(os.environ["ORDER_TABLE_NAME"])
 
 
 @metrics.log_metrics(capture_cold_start_metric=True)
@@ -46,11 +47,17 @@ def lambda_handler(event, context):
     )
 
     cart_items = response.get("Items")
-    # batch_writer will be used to update status for cart entries belonging to the user
-    with table.batch_writer() as batch:
-        for item in cart_items:
-            # Delete ordered items
-            batch.delete_item(Key={"pk": item["pk"], "sk": item["sk"]})
+
+    orderTable.update_item(
+        Key={"customerId": user_id, "orderId": "123"},
+        ExpressionAttributeNames={
+            "#cartItems": "cartItems",
+        },
+        ExpressionAttributeValues={
+            ":cartItems": cart_items,
+        },
+        UpdateExpression="SET #cartItems = :cartItems",
+    )
 
     metrics.add_metric(name="CartCheckedOut", unit="Count", value=1)
     logger.info({"action": "CartCheckedOut", "cartItems": cart_items})
