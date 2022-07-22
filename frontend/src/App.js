@@ -4,8 +4,6 @@ import {Products, Navbar, Cart, Login, Register} from './components';
 
 import {Switch, Route} from 'react-router-dom';
 
-import * as AmazonCognitoIdentity from 'amazon-cognito-identity-js';
-
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 import { useHistory } from 'react-router-dom';
@@ -20,68 +18,68 @@ const App = () => {
   const [token, setToken] = useState('');
 
 
-  function loginUser(username, password){
+  //sends a POST request to the backend and retrieves the id token for the user
+  //with the given username and password
+  const loginUser = async(username, password) => {
 
-    var authenticationData = {
-      Username : username,
-      Password : password,
-    };
+    const response = await fetch('https://1ovbu6d97g.execute-api.us-west-2.amazonaws.com/prod/login', {
+      headers: {'Content-Type': 'application/json'},
+      method: 'POST',
+      body: JSON.stringify({username, password})
+    })
+    .then( response => {
+      console.log(response);
 
-    var authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
+      if(response.status !== 200){
+        console.log("an error occured")
+        alert('looks like the username or password is incorrect')
+      }else{
+        console.log("successfully retrieved payload");
+        fetchCart();
+        history.push('/');
+      }
 
-    var poolData = {
-      UserPoolId: 'us-west-2_vzC9QSbAL', // Your user pool id here
-      ClientId: '59dtuohbrcbh364tvrsr6oc8he', // Your client id here
-    };
+      return response;
 
-    var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+    }).catch(error => {console.log(error);})
 
-    var userData = {
-      Username : username,
-      Pool : userPool
-  };
-  var cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
-  cognitoUser.authenticateUser(authenticationDetails, {
-      onSuccess: function (result) {
-          setToken(result.getIdToken().getJwtToken());
-          fetchCart();
-          history.push('/');
+    const body = await response.json();
 
-      },
+    setToken(body['token']);
 
-      onFailure: function(err) {
-          alert(err);
-      },
-
-  });
 }
 
-function registerUser(username, password){
+//send a POST request to the backend to register a user with the given username and password
+const registerUser = async(username, password) => {
 
-  var poolData = {
-    UserPoolId: 'us-west-2_vzC9QSbAL', // Your user pool id here
-    ClientId: '59dtuohbrcbh364tvrsr6oc8he', // Your client id here
-  };
+    await fetch('https://1ovbu6d97g.execute-api.us-west-2.amazonaws.com/prod/register', {
+      headers: {'Content-Type': 'application/json'},
+      method: 'POST',
+      body: JSON.stringify({username, password})
+    })
+    .then( response => {
 
-  var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
-  var cognitoUser;
-  userPool.signUp(username, password, null, null, function(err, result){
-    if (err) {
-        console.log(err);
-        alert(err);
-        return;
-    }
-    cognitoUser = result.user;
-    console.log('user name is ' + cognitoUser.getUsername());
-    alert('Thank you for registering: ' + cognitoUser.getUsername());
-    loginUser(username, password);
-});
-  
+      console.log(response);
+
+      if(response.status !== 200){
+        console.log("an error occured")
+        alert('sorry, that user already exists!')
+      }else{
+        console.log("successfully retrieved payload");
+        alert('Thank you for registering: ' + username);
+        loginUser(username, password);
+      }
+
+      return response
+
+    })
+    .catch(error => {console.log(error)})
+
 }
 
   //updates the quantity of a specified product in the cart
   const handleUpdateCartQty = async (productId, quantity) => {
-    await fetch('https://3fyby70779.execute-api.us-west-2.amazonaws.com/Prod/cart' + productId, {
+    await fetch('https://3fyby70779.execute-api.us-west-2.amazonaws.com/Prod/cart/' + productId, {
       headers: {'Content-Type': 'application/json', 'Authorization': token},
       method: 'PUT',
       body: JSON.stringify({quantity}),

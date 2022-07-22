@@ -4,6 +4,7 @@ import os
 import boto3
 from aws_lambda_powertools import Logger, Metrics, Tracer
 from boto3.dynamodb.conditions import Key
+from datetime import datetime
 
 from shared import get_cart_id, get_headers, handle_decimal_type
 
@@ -48,19 +49,40 @@ def lambda_handler(event, context):
 
     cart_items = response.get("Items")
 
+    cart = []
+
+    for item in cart_items:
+
+        quantity = {"quantity": item["quantity"]}
+        product_detail = {"productDetail": item["productDetail"]}
+        product_detail.update(quantity)
+
+        cart.append(product_detail)
+    
+
+    current_date_time = datetime.now()
+    current_date_time = current_date_time.strftime("%d/%m/%Y %H:%M:%S")
+
+    #add items to the restaurantOrders database
     orderTable.update_item(
-        Key={"customerId": user_id, "orderId": "123"},
+        Key={"userId": user_id, "date": current_date_time},
         ExpressionAttributeNames={
             "#cartItems": "cartItems",
         },
         ExpressionAttributeValues={
-            ":cartItems": cart_items,
+            ":cartItems": cart,
         },
         UpdateExpression="SET #cartItems = :cartItems",
     )
 
+    #deletes items from temporary database
+    with table.batch_writer() as batch:
+        for item in cart_items:
+            # Delete ordered items
+            batch.delete_item(Key={"pk": item["pk"], "sk": item["sk"]})
+
     metrics.add_metric(name="CartCheckedOut", unit="Count", value=1)
-    logger.info({"action": "CartCheckedOut", "cartItems": cart_items})
+    logger.info({"action": "CartCheckedOut", "cartItems": cart})
 
     return {
         "statusCode": 200,
