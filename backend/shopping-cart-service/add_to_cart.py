@@ -52,7 +52,7 @@ def lambda_handler(event, context):
     try:
         product = get_product_from_external_service(product_id)
     except NotFoundException:
-        logger.info("No product found with product_id: %s", product_id)
+        #logger.info("No product found with product_id: %s", product_id)
         return {
             "statusCode": 404,
             "headers": get_headers(cart_id=cart_id),
@@ -60,18 +60,18 @@ def lambda_handler(event, context):
         }
 
     if user_sub:
-        logger.info("Authenticated user")
+        #logger.info("Authenticated user")
         pk = f"user#{user_sub}"
         ttl = generate_ttl(
             7
         )  # Set a longer ttl for logged in users - we want to keep their cart for longer.
     else:
-        logger.info("Unauthenticated user")
+        #logger.info("Unauthenticated user")
         pk = f"cart#{cart_id}"
         ttl = generate_ttl()
 
     if int(quantity) < 0:
-        logger.info("Quantity is less than zero")
+        #logger.info("Quantity is less than zero")
         table.update_item(
             Key={"pk": pk, "sk": f"product#{product_id}"},
             ExpressionAttributeNames={
@@ -90,7 +90,7 @@ def lambda_handler(event, context):
             ConditionExpression="quantity >= :limit",
         )
     else:
-        logger.info("quantity is greater than zero, quantity")
+        #logger.info("quantity is greater than zero, quantity")
         table.update_item(
             Key={"pk": pk, "sk": f"product#{product_id}"},
             ExpressionAttributeNames={
