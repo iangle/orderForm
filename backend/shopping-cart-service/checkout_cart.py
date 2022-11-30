@@ -54,10 +54,10 @@ def lambda_handler(event, context):
     for item in cart_items:
 
         quantity = {"quantity": item["quantity"]}
-        product_detail = {"productDetail": item["productDetail"]}
-        product_detail.update(quantity)
+        product_id = {"productId": item["productDetail"][0]["productId"]}
+        product_id.update(quantity)
 
-        cart.append(product_detail)
+        cart.append(product_id)
     
 
     current_date_time = datetime.now()

@@ -43,6 +43,15 @@ def lambda_handler(event, context):
     quantity = request_payload.get("quantity", 1)
     cart_id, _ = get_cart_id(event["headers"])
 
+    if product_id == "one":
+        return {
+            "statusCode": 202,
+            "headers": get_headers(cart_id),
+            "body": json.dumps(
+                {"productId": product_id, "message": "warm up complete"}
+            ),
+        }
+
     # Because this method can be called anonymously, we need to check there's a logged in user
     user_sub = None
     jwt_token = event["headers"].get("Authorization")

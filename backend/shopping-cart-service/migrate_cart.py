@@ -1,6 +1,5 @@
 import json
 import os
-import threading
 
 import boto3
 from aws_lambda_powertools import Logger, Metrics, Tracer
@@ -14,8 +13,6 @@ metrics = Metrics()
 
 dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table(os.environ["TABLE_NAME"])
-sqs = boto3.resource("sqs")
-queue = sqs.Queue(os.environ["DELETE_FROM_CART_SQS_QUEUE"])
 
 
 @tracer.capture_method
@@ -74,20 +71,7 @@ def lambda_handler(event, context):
     thread_list = []
 
     for item in unauth_cart:
-        # Store items with user identifier as pk instead of "unauthenticated" cart ID
-        # Using threading library to perform updates in parallel
-        ddb_updateitem_thread = threading.Thread(
-            target=update_item, args=(user_id, item)
-        )
-        thread_list.append(ddb_updateitem_thread)
-        ddb_updateitem_thread.start()
-
-        # Delete items with unauthenticated cart ID
-        # Rather than deleting directly, push to SQS queue to handle asynchronously
-        queue.send_message(MessageBody=json.dumps(item, default=handle_decimal_type))
-
-    for ddb_thread in thread_list:
-        ddb_thread.join()  # Block main thread until all updates finished
+        update_item(user_id, item)
 
     if unauth_cart:
         metrics.add_metric(name="CartMigrated", unit="Count", value=1)
