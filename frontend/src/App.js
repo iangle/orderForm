@@ -45,7 +45,11 @@ const App = () => {
 
     const body = await response.json();
 
-    setToken(body['token']);
+    const access_token = body['token'];
+
+    setToken(access_token);
+
+    migrateCart(access_token);
 
 }
 
@@ -121,6 +125,24 @@ const registerUser = async(username, password) => {
     setCart(data.products);
   }
 
+  const migrateCart = async (access_token) => {
+    const response = await fetch('https://3fyby70779.execute-api.us-west-2.amazonaws.com/Prod/cart/migrate', { 
+      headers: { 'Content-Type': 'application/json', 'Authorization': access_token },
+      method: 'POST',
+      credentials: 'include', 
+    })
+    .then(response => {
+      console.log(response);
+      if(response.status !== 200){
+        console.log("an error occured")
+      }else{
+        console.log("successfully retrieved payload");
+      }
+
+      return response
+    }).catch(error => {console.log(error);});
+  }
+
   //adds a product to the cart
   const handleAddToCart = async (productId, quantity) => {
     
@@ -190,6 +212,7 @@ const registerUser = async(username, password) => {
 
     getProducts();
     fetchCart();
+    handleAddToCart("one",1);
 
   }, []);
 
